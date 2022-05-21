@@ -1,67 +1,26 @@
 import React from "react";
+import axios from "axios";
 
 const RandomColor = (props) => {
-    const currentcolor = (
-        {"colors": [
-            {
-                "timestamp": 1187574800, 
-                "hex": "dcebd2", 
-                "id": 50162, 
-                "tags": [
-                    {
-                        "timestamp": 1108110850, 
-                        "id": 2561, 
-                        "name": "green"
-                    },
-                    {
-                        "timestamp": 1109629706, "id": 5943, "name": "vision"
-                    }]}], 
-        "schemes": [], 
-        "schemes_history": {}, 
-        "success": true, "colors_history": {
-            "dcebd2": [
-                {
-                    "d_count": 0, 
-                    "id": "2561", 
-                    "a_count": 1, 
-                    "name": "green"
-                },
-                {
-                    "d_count": 0, 
-                    "id": "5943", 
-                    "a_count": 1, 
-                    "name": "vision"
-                }]}, 
-        "messages": [],
-        "new_color": "dcebd2"}
-    )
 
-    const [color, setColor] = React.useState({
-        randomColor: currentcolor 
-    })
-
-    
-    const [allColors, setAllColors] = React.useState([])
+    const [color, setColor] = React.useState("")
 
     React.useEffect(() => {
-        fetch("https://www.colr.org/json/color/random?timestamp=${new Date().getTime()}")
-            .then(res => res.json())
-            .then(data => setAllColors(data))
+        getColor()
     }, [])
     
     const getColor = () => {
-        const randomNumber = Math.floor(Math.random() * allColors.length)
-        const url = allColors[randomNumber].url
-        setColor(prevColor => ({
-            ...prevColor,
-            randomColor: url
-        }))
-        
+        axios.get(`https://www.colr.org/json/color/random?timestamp=${new Date().getTime()}`)
+            .then(res => setColor(res.data.colors[0].hex))        
     }
     
     return (
-        <main style={{backgroundColor: color.randomColor}}>
-            <button className="form--button" onClick={getColor}>Pick a New Color</button>
+        <main>
+            <header>
+                <h1>React Random Color Component Generator</h1>
+            </header>
+            <div className="box" style={{background: `#${color}`}}></div>
+            <button className="form--button" onClick={getColor}><h2>Pick a New Color</h2></button>
         </main>
     )
 }
